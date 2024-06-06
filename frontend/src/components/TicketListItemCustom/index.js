@@ -201,6 +201,8 @@ const useStyles = makeStyles((theme) => ({
   const { user } = useContext(AuthContext);
   const { profile } = user;
 
+  const { ticketTag } = useParams();
+
   useEffect(() => {
     if (ticket.userId && ticket.user) {
       setTicketUser(ticket.user?.name?.toUpperCase());
@@ -237,7 +239,11 @@ const useStyles = makeStyles((theme) => ({
     if (isMounted.current) {
       setLoading(false);
     }
-    history.push(`/tickets/`);
+    if(ticketTag){
+      history.push(`/tickettagged/${ticketTag}`);
+    }else{
+      history.push(`/tickets/`);
+    }
   };
 
   const handleReopenTicket = async (id) => {
@@ -255,7 +261,11 @@ const useStyles = makeStyles((theme) => ({
     if (isMounted.current) {
       setLoading(false);
     }
-    history.push(`/tickets/${ticket.uuid}`);
+    if(ticketTag){
+      history.push(`/tickettagged/${ticketTag}/${ticket.uuid}`);
+    }else{
+      history.push(`/tickets/${ticket.uuid}`);
+    }
   };
 
     const handleAcepptTicket = async (id) => {
@@ -289,7 +299,12 @@ const useStyles = makeStyles((theme) => ({
 
         // handleChangeTab(null, "tickets");
         // handleChangeTab(null, "open");
-        history.push(`/tickets/${ticket.uuid}`);
+        //history.push(`/tickets/${ticket.uuid}`);
+        if(ticketTag){
+          history.push(`/tickettagged/${ticketTag}/${ticket.uuid}`);
+        }else{
+          history.push(`/tickets/${ticket.uuid}`);
+        }
     };
 	
 	    const handleSendMessage = async (id) => {
@@ -311,7 +326,8 @@ const useStyles = makeStyles((theme) => ({
   const handleSelectTicket = (ticket) => {
     const code = uuidv4();
     const { id, uuid } = ticket;
-    setCurrentTicket({ id, uuid, code });
+    const tagCurrent = (ticketTag) ? ticketTag : false;
+    setCurrentTicket({ id, uuid, code, tagCurrent });
   };
 
 
@@ -365,6 +381,7 @@ const useStyles = makeStyles((theme) => ({
         className={clsx(classes.ticket, {
           [classes.pendingTicket]: ticket.status === "pending",
         })}
+        style={{minHeight: "80px"}}
       >
         <Tooltip arrow placement="right" title={ticket.queue?.name?.toUpperCase() || "SEM FILA"} >
           <span style={{ backgroundColor: ticket.queue?.color || "#7C7C7C" }} className={classes.ticketQueueColor}></span>
@@ -427,7 +444,7 @@ const useStyles = makeStyles((theme) => ({
             </span>
 
           }
-          secondary={
+/*          secondary={
             <span className={classes.contactNameWrapper}>
 
               <Typography
@@ -449,6 +466,27 @@ const useStyles = makeStyles((theme) => ({
                     );
                   })}
                 </span>
+              </Typography>
+
+              <Badge
+                className={classes.newMessagesCount}
+                badgeContent={ticket.unreadMessages}
+                classes={{
+                  badge: classes.badgeStyle,
+                }}
+              />
+            </span>
+          }*/
+          secondary={
+            <span className={classes.contactNameWrapper}>
+
+              <Typography
+                className={classes.contactLastMessage}
+                noWrap
+                component="span"
+                variant="body2"
+                color="textSecondary"
+              > {ticket.lastMessage.includes('data:image/png;base64') ? <MarkdownWrapper> Localização</MarkdownWrapper> : <MarkdownWrapper>{ticket.lastMessage}</MarkdownWrapper>}
               </Typography>
 
               <Badge

@@ -61,6 +61,12 @@ const Routes = () => {
                   path="/tickets/:ticketId?"
                   component={TicketResponsiveContainer}
                   isPrivate
+                />{/* Reoff Alterado*/}
+                <Route
+                  exact
+                  path="/tickettagged/:ticketTag/:ticketId?"
+                  component={TicketResponsiveContainer}
+                  isPrivate
                 />
                 <Route
                   exact

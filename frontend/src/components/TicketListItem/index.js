@@ -109,6 +109,8 @@ const TicketListItem = ({ ticket }) => {
   const isMounted = useRef(true);
   const { user } = useContext(AuthContext);
 
+  const { ticketTag } = useParams();
+
   useEffect(() => {
     return () => {
       isMounted.current = false;
@@ -129,12 +131,22 @@ const TicketListItem = ({ ticket }) => {
     if (isMounted.current) {
       setLoading(false);
     }
-    history.push(`/tickets/${ticket.uuid}`);
+    if(ticketTag){
+      history.push(`/tickettagged/${ticketTag}/${ticket.uuid}`);
+    }else{
+      history.push(`/tickets/${ticket.uuid}`);
+    }
+    //history.push(`/tickets/${ticket.uuid}`);
   };
   console.log("🚀 Console Log : ticket.lastMessage", ticket.lastMessage);
 
   const handleSelectTicket = (ticket) => {
-    history.push(`/tickets/${ticket.uuid}`);
+    if(ticketTag){
+      history.push(`/tickettagged/${ticketTag}/${ticket.uuid}`);
+    }else{
+      history.push(`/tickets/${ticket.uuid}`);
+    }
+    //history.push(`/tickets/${ticket.uuid}`);
   };
 
   return (

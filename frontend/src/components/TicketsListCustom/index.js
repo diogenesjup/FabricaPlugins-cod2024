@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useReducer, useContext } from "react";
+import { useHistory, useParams } from "react-router-dom";
 
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
@@ -11,6 +12,8 @@ import useTickets from "../../hooks/useTickets";
 import { i18n } from "../../translate/i18n";
 import { AuthContext } from "../../context/Auth/AuthContext";
 import { socketConnection } from "../../services/socket";
+import api from "../../services/api";
+import { isArray } from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   ticketsListWrapper: {
@@ -170,6 +173,14 @@ const TicketsListCustom = (props) => {
   const { user } = useContext(AuthContext);
   const { profile, queues } = user;
 
+  const { ticketTag } = useParams();
+
+  /*if(!tags && ticketTag){
+    tags = ticketTag;
+  }*/
+  var tags2 = tags;
+  if(!tags && ticketTag) tags2 = [ticketTag];
+
   useEffect(() => {
     dispatch({ type: "RESET" });
     setPageNumber(1);
@@ -180,7 +191,7 @@ const TicketsListCustom = (props) => {
     searchParam,
     status,
     showAll,
-    tags: JSON.stringify(tags),
+    tags: JSON.stringify(tags2),
     users: JSON.stringify(users),
     queueIds: JSON.stringify(selectedQueueIds),
   });
@@ -191,11 +202,25 @@ const TicketsListCustom = (props) => {
       (t) => queueIds.indexOf(t.queueId) > -1
     );
 
-    if (profile === "user") {
+    if(!ticketTag){
+      if (profile === "user") {
+        dispatch({ type: "LOAD_TICKETS", payload: filteredTickets.filter((t) => (!t.tags || t.tags.length < 1)) });
+      } else {
+        dispatch({ type: "LOAD_TICKETS", payload: tickets.filter((t) => (!t.tags || t.tags.length < 1)) });
+      }
+    }else{
+      if (profile === "user") {
+        dispatch({ type: "LOAD_TICKETS", payload: filteredTickets });
+      } else {
+        dispatch({ type: "LOAD_TICKETS", payload: tickets });
+      }
+    }
+
+    /*if (profile === "user") {
       dispatch({ type: "LOAD_TICKETS", payload: filteredTickets });
     } else {
       dispatch({ type: "LOAD_TICKETS", payload: tickets });
-    }
+    }*/
   }, [tickets, status, searchParam, queues, profile]);
 
   useEffect(() => {
@@ -244,6 +269,23 @@ const TicketsListCustom = (props) => {
 
     socket.on(`company-${companyId}-appMessage`, (data) => {
       const queueIds = queues.map((q) => q.id);
+
+      if(ticketTag && 
+          (data.ticket.tags === null || 
+            (isArray(data.ticket.tags) && data.ticket.tags.findIndex((u) => u.id === ticketTag) < 0) 
+          )
+        ){
+        return;
+      }
+
+      if(!ticketTag && 
+          (data.ticket.tags !== null || 
+            (isArray(data.ticket.tags) && data.ticket.tags.length > 0) 
+          )
+        ){
+        return;
+      }
+
       if (
         profile === "user" &&
         (queueIds.indexOf(data.ticket.queue?.id) === -1 ||

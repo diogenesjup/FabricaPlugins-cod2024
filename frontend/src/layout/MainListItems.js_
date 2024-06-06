@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer, useState, useCallback } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 
 import ListItem from "@material-ui/core/ListItem";
@@ -128,24 +128,6 @@ const reducer = (state, action) => {
   }
 };
 
-const reducer2 = (state, action) => {
-  if (action.type === "LOAD_TAGS") {
-    const tags = action.payload;
-    const newTags = [];
-
-    tags.forEach((tag) => {
-      const tagIndex = state.findIndex((s) => s.id === tag.id);
-      if (tagIndex !== -1) {
-        state[tagIndex] = tag;
-      } else {
-        newTags.push(tag);
-      }
-    });
-
-    return [...state, ...newTags];
-  }
-};
-
 const MainListItems = (props) => {
   const classes = useStyles();
   const { drawerClose, collapsed } = props;
@@ -160,20 +142,6 @@ const MainListItems = (props) => {
   const [pageNumber, setPageNumber] = useState(1);
   const [searchParam] = useState("");
   const [chats, dispatch] = useReducer(reducer, []);
-  const [tags, dispatch2] = useReducer(reducer2, []);
-
-  const fetchTags = useCallback(async () => {
-    try {
-      const { data } = await api.get("/tags/", {
-        params: { searchParam, pageNumber },
-      });
-      dispatch2({ type: "LOAD_TAGS", payload: data.tags });
-      //setHasMore(data.hasMore);
-      //setLoading(false);
-    } catch (err) {
-      toastError(err);
-    }
-  }, [searchParam, pageNumber]);
 
   useEffect(() => {
     dispatch({ type: "RESET" });
@@ -187,14 +155,6 @@ const MainListItems = (props) => {
     return () => clearTimeout(delayDebounceFn);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParam, pageNumber]);
-
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      fetchTags();
-    }, 500);
-    return () => clearTimeout(delayDebounceFn);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParam, pageNumber, fetchTags]);
 
   useEffect(() => {
     const companyId = localStorage.getItem("companyId");
@@ -305,20 +265,6 @@ const MainListItems = (props) => {
               icon={<WhatsAppIcon />}
             />
             <ListItemLink
-              to="/tags"
-              primary={i18n.t("mainDrawer.listItems.tags")}
-              icon={<LocalOfferIcon />}
-            />
-            <Divider/>
-            {tags.map((tag) => (
-              <ListItemLink
-              to={"/tickettagged/".concat(tag.id)}
-              primary={tag.name}
-              icon={<LocalOfferIcon style={{color: tag.color}} />}
-              />
-              ))}
-            <Divider/>
-            <ListItemLink
               to="/quick-messages"
               primary={i18n.t("mainDrawer.listItems.quickMessages")}
               icon={<FlashOnIcon />}
@@ -342,6 +288,11 @@ const MainListItems = (props) => {
               to="/schedules"
               primary={i18n.t("mainDrawer.listItems.schedules")}
               icon={<EventIcon />}
+            />
+            <ListItemLink
+              to="/tags"
+              primary={i18n.t("mainDrawer.listItems.tags")}
+              icon={<LocalOfferIcon />}
             />
             <ListItemLink
               to="/chats"

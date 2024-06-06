@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useReducer, useContext } from "react";
+import { useHistory, useParams } from "react-router-dom";
 
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
@@ -165,6 +166,14 @@ const TicketsList = ({
   const [ticketsList, dispatch] = useReducer(reducer, []);
   const { user } = useContext(AuthContext);
 
+  const { ticketTag } = useParams();
+
+  /*if(!tags && ticketTag){
+    tags = ticketTag;
+  }*/
+  var tags2 = tags;
+  if(!tags && ticketTag) tags2 = [ticketTag];
+
   useEffect(() => {
     dispatch({ type: "RESET" });
     setPageNumber(1);
@@ -173,7 +182,7 @@ const TicketsList = ({
   const { tickets, hasMore, loading } = useTickets({
     pageNumber,
     searchParam,
-    tags: JSON.stringify(tags),
+    tags: JSON.stringify(tags2),
     status,
     showAll,
     queueIds: JSON.stringify(selectedQueueIds),

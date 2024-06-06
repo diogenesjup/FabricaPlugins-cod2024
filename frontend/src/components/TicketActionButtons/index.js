@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 
 import { makeStyles } from "@material-ui/core/styles";
 import { IconButton } from "@material-ui/core";
@@ -33,6 +33,8 @@ const TicketActionButtons = ({ ticket }) => {
 	const ticketOptionsMenuOpen = Boolean(anchorEl);
 	const { user } = useContext(AuthContext);
 
+	const { ticketTag } = useParams();
+
 	const handleOpenTicketOptionsMenu = e => {
 		setAnchorEl(e.currentTarget);
 	};
@@ -50,7 +52,13 @@ const TicketActionButtons = ({ ticket }) => {
 			});
 
 			setLoading(false);
-			if (status === "open") {
+			if (status === "open" && ticketTag) {
+				history.push(`/tickettagged/${ticketTag}/${ticket.id}`);
+			} else {
+				history.push(`/tickettagged/${ticketTag}/`);
+			}
+
+			if (status === "open" && !ticketTag) {
 				history.push(`/tickets/${ticket.id}`);
 			} else {
 				history.push("/tickets");

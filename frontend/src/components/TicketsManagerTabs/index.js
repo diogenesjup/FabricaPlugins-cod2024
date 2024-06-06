@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
@@ -160,6 +160,8 @@ const TicketsManagerTabs = () => {
   const [selectedTags, setSelectedTags] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
 
+  const { ticketTag } = useParams();
+
   useEffect(() => {
     if (user.profile.toUpperCase() === "ADMIN") {
       setShowAllTickets(true);
@@ -208,7 +210,12 @@ const TicketsManagerTabs = () => {
   const handleCloseOrOpenTicket = (ticket) => {
     setNewTicketModalOpen(false);
     if (ticket !== undefined && ticket.uuid !== undefined) {
-      history.push(`/tickets/${ticket.uuid}`);
+        if(ticketTag){
+          history.push(`/tickettagged/${ticketTag}/${ticket.uuid}`);
+        }else{
+          history.push(`/tickets/${ticket.uuid}`);
+        }
+      //history.push(`/tickets/${ticket.uuid}`);
     }
   };
 

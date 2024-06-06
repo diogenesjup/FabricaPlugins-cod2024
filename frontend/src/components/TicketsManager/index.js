@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
@@ -92,6 +93,10 @@ const TicketsManager = () => {
 
 	const userQueueIds = user.queues.map(q => q.id);
 	const [selectedQueueIds, setSelectedQueueIds] = useState(userQueueIds || []);
+
+	//reoff alterado
+	const { ticketTag } = useParams();
+	//const listSelectedTag = useState([]);
 
 	useEffect(() => {
 		if (tab === "search") {
@@ -212,14 +217,16 @@ const TicketsManager = () => {
 					status="open"
 					showAll={showAllTickets}
 					selectedQueueIds={selectedQueueIds}
+					tags={ticketTag}
 				/>
-				<TicketsList status="pending" selectedQueueIds={selectedQueueIds} />
+				<TicketsList status="pending" tags={ticketTag} selectedQueueIds={selectedQueueIds} />
 			</TabPanel>
 			<TabPanel value={tab} name="closed" className={classes.ticketsWrapper}>
 				<TicketsList
 					status="closed"
 					showAll={true}
 					selectedQueueIds={selectedQueueIds}
+					tags={ticketTag}
 				/>
 			</TabPanel>
 			<TabPanel value={tab} name="search" className={classes.ticketsWrapper}>
@@ -227,6 +234,7 @@ const TicketsManager = () => {
 					searchParam={searchParam}
 					showAll={true}
 					selectedQueueIds={selectedQueueIds}
+					tags={ticketTag}
 				/>
 			</TabPanel>
 		</Paper>
