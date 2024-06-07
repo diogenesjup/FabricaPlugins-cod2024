@@ -20,6 +20,7 @@ import ButtonWithSpinner from "../ButtonWithSpinner";
 import ConfirmationModal from "../ConfirmationModal";
 
 import { Edit as EditIcon } from "@material-ui/icons";
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
 import { toast } from "react-toastify";
 import useCompanies from "../../hooks/useCompanies";
@@ -395,7 +396,7 @@ export function CompanyForm(props) {
 }
 
 export function CompaniesManagerGrid(props) {
-  const { records, onSelect } = props;
+  const { records, onSelect, onSelectAndDelete } = props;
   const classes = useStyles();
   const { dateToClient } = useDate();
 
@@ -448,9 +449,6 @@ export function CompaniesManagerGrid(props) {
       >
         <TableHead>
           <TableRow>
-            <TableCell align="center" style={{ width: "1%" }}>
-              #
-            </TableCell>
             <TableCell align="left">Nome</TableCell>
             <TableCell align="left">E-mail</TableCell>
             <TableCell align="left">Telefone</TableCell>
@@ -459,16 +457,15 @@ export function CompaniesManagerGrid(props) {
             <TableCell align="left">Status</TableCell>
             <TableCell align="left">Criada Em</TableCell>
             <TableCell align="left">Vencimento</TableCell>
+            <TableCell align="center">
+              
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {records.map((row, key) => (
             <TableRow style={rowStyle(row)} key={key}>
-              <TableCell align="center" style={{ width: "1%" }}>
-                <IconButton onClick={() => onSelect(row)} aria-label="delete">
-                  <EditIcon />
-                </IconButton>
-              </TableCell>
+              
               <TableCell align="left">{row.name || "-"}</TableCell>
               <TableCell align="left">{row.email || "-"}</TableCell>
               <TableCell align="left">{row.phone || "-"}</TableCell>
@@ -480,6 +477,14 @@ export function CompaniesManagerGrid(props) {
                 {dateToClient(row.dueDate)}
                 <br />
                 <span>{row.recurrence}</span>
+              </TableCell>
+              <TableCell align="right" style={{ display: "flex" }}>
+                <IconButton onClick={() => onSelectAndDelete(row)} aria-label="delete">
+                  <DeleteForeverIcon />
+                </IconButton>
+                <IconButton onClick={() => onSelect(row)} aria-label="delete">
+                  <EditIcon />
+                </IconButton>
               </TableCell>
             </TableRow>
           ))}
@@ -598,6 +603,33 @@ export default function CompaniesManager() {
     }));
   };
 
+  const handleSelectAndDelete = (data) => {
+    let campaignsEnabled = false;
+
+    const setting = data.settings.find(
+      (s) => s.key.indexOf("campaignsEnabled") > -1
+    );
+    if (setting) {
+      campaignsEnabled =
+        setting.value === "true" || setting.value === "enabled";
+    }
+
+    setRecord((prev) => ({
+      ...prev,
+      id: data.id,
+      name: data.name || "",
+      phone: data.phone || "",
+      email: data.email || "",
+      planId: data.planId || "",
+      status: data.status === false ? false : true,
+      campaignsEnabled,
+      dueDate: data.dueDate || "",
+      recurrence: data.recurrence || "",
+    }));
+
+    setShowConfirmDialog(true);
+  };
+
   return (
     <Paper className={classes.mainPaper} elevation={0}>
       <Grid spacing={2} container>
@@ -611,7 +643,7 @@ export default function CompaniesManager() {
           />
         </Grid>
         <Grid xs={12} item>
-          <CompaniesManagerGrid records={records} onSelect={handleSelect} />
+          <CompaniesManagerGrid records={records} onSelect={handleSelect} onSelectAndDelete={handleSelectAndDelete} />
         </Grid>
       </Grid>
       <ConfirmationModal

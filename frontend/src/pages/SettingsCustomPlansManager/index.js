@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SettingsCustom = () => {
+const SettingsCustomPlansManager = () => {
   const classes = useStyles();
   const [tab, setTab] = useState("options");
   const [schedules, setSchedules] = useState([]);
@@ -152,86 +152,20 @@ const SettingsCustom = () => {
   return (
     <MainContainer className={classes.root}>
       <MainHeader>
-        <Title>{i18n.t("settings.title")}</Title>
+        <Title>{i18n.t("Planos")}</Title>
       </MainHeader>
       <Paper className={classes.mainPaper} elevation={1}>
-        <Tabs
-          value={tab}
-          indicatorColor="primary"
-          textColor="primary"
-          scrollButtons="on"
-          variant="scrollable"
-          onChange={handleTabChange}
-          className={classes.tab}
-        >
-          <Tab label="Opções" value={"options"} />
-          {schedulesEnabled && <Tab label="Horários" value={"schedules"} />}
-          {/*isSuper() ? <Tab label="Empresas" value={"companies"} /> : null}
-          {isSuper() ? <Tab label="Planos" value={"plans"} /> : null*/}
-          {isSuper() ? <Tab label="Ajuda" value={"helps"} /> : null}
-        </Tabs>
         <Paper className={classes.paper} elevation={0}>
-          <TabPanel
-            className={classes.container}
-            value={tab}
-            name={"schedules"}
-          >
-            <SchedulesForm
-              loading={loading}
-              onSubmit={handleSubmitSchedules}
-              initialValues={schedules}
-            />
-          </TabPanel>
-          {/*
           <OnlyForSuperUser
             user={currentUser}
             yes={() => (
-              <TabPanel
-                className={classes.container}
-                value={tab}
-                name={"companies"}
-              >
-                <CompaniesManager />
-              </TabPanel>
+              <PlansManager />
             )}
           />
-          <OnlyForSuperUser
-            user={currentUser}
-            yes={() => (
-              <TabPanel
-                className={classes.container}
-                value={tab}
-                name={"plans"}
-              >
-                <PlansManager />
-              </TabPanel>
-            )}
-          /> 
-          */}
-          <OnlyForSuperUser
-            user={currentUser}
-            yes={() => (
-              <TabPanel
-                className={classes.container}
-                value={tab}
-                name={"helps"}
-              >
-                <HelpsManager />
-              </TabPanel>
-            )}
-          />
-          <TabPanel className={classes.container} value={tab} name={"options"}>
-            <Options
-              settings={settings}
-              scheduleTypeChanged={(value) =>
-                setSchedulesEnabled(value === "company")
-              }
-            />
-          </TabPanel>
         </Paper>
       </Paper>
     </MainContainer>
   );
 };
 
-export default SettingsCustom;
+export default SettingsCustomPlansManager;

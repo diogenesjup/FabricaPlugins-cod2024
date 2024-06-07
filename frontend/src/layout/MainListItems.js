@@ -25,6 +25,8 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import PeopleIcon from "@material-ui/icons/People";
 import ListIcon from "@material-ui/icons/ListAlt";
 import AnnouncementIcon from "@material-ui/icons/Announcement";
+import ApartmentIcon from '@material-ui/icons/Apartment';
+import LocalPlayIcon from '@material-ui/icons/LocalPlay';
 import ForumIcon from "@material-ui/icons/Forum";
 import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import RotateRight from "@material-ui/icons/RotateRight";
@@ -487,6 +489,20 @@ const MainListItems = (props) => {
               primary={i18n.t("mainDrawer.listItems.users")}
               icon={<PeopleAltOutlinedIcon />}
             />
+            {user.super && (
+              <ListItemLink
+                to="/planos"
+                primary={i18n.t("Planos")}
+                icon={<LocalPlayIcon />}
+              />
+            )}
+            {user.super && (
+              <ListItemLink
+                to="/empresas"
+                primary={i18n.t("Empresas")}
+                icon={<ApartmentIcon />}
+              />
+            )}
             <ListItemLink
               to="/messages-api"
               primary={i18n.t("mainDrawer.listItems.messagesAPI")}

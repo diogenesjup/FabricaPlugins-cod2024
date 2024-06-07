@@ -9,6 +9,8 @@ import Signup from "../pages/Signup/";
 import Login from "../pages/Login/";
 import Connections from "../pages/Connections/";
 import SettingsCustom from "../pages/SettingsCustom/";
+import SettingsCustomCompaniesManager from "../pages/SettingsCustomCompaniesManager/";
+import SettingsCustomPlansManager from "../pages/SettingsCustomPlansManager/";
 import Financeiro from "../pages/Financeiro/";
 import Users from "../pages/Users";
 import Contacts from "../pages/Contacts/";
@@ -61,7 +63,7 @@ const Routes = () => {
                   path="/tickets/:ticketId?"
                   component={TicketResponsiveContainer}
                   isPrivate
-                />{/* Reoff Alterado*/}
+                />
                 <Route
                   exact
                   path="/tickettagged/:ticketTag/:ticketId?"
@@ -100,6 +102,24 @@ const Routes = () => {
                   exact
                   path="/messages-api"
                   component={MessagesAPI}
+                  isPrivate
+                />
+                <Route
+                  exact
+                  path="/settings"
+                  component={SettingsCustom}
+                  isPrivate
+                />
+                <Route
+                  exact
+                  path="/empresas"
+                  component={SettingsCustomCompaniesManager}
+                  isPrivate
+                />
+                <Route
+                  exact
+                  path="/planos"
+                  component={SettingsCustomPlansManager}
                   isPrivate
                 />
                 <Route

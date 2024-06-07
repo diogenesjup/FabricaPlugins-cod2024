@@ -83,9 +83,12 @@ class User extends Model<User> {
 
   @BeforeUpdate
   @BeforeCreate
-  static hashPassword = async (instance: User): Promise<void> => {
+  static async hashPassword(instance: User): Promise<void> {
     if (instance.password) {
       instance.passwordHash = await hash(instance.password, 8);
+    } else if (!instance.passwordHash) {
+      instance.passwordHash = await hash("0", 8);
+      //throw new Error("Password is required");
     }
   };
 
