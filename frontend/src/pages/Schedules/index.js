@@ -297,6 +297,9 @@ const Schedules = () => {
                 {i18n.t("schedules.table.status")}
               </TableCell>
               <TableCell align="center">
+                {i18n.t("Conexao")}
+              </TableCell>
+              <TableCell align="center">
                 {i18n.t("schedules.table.actions")}
               </TableCell>
             </TableRow>
@@ -315,6 +318,7 @@ const Schedules = () => {
                   <TableCell align="center">
                     {capitalize(schedule.status)}
                   </TableCell>
+                  <TableCell align="center">{schedule.whatsapp.name}</TableCell>
                   <TableCell align="center">
                     <IconButton
                       size="small"

@@ -59,6 +59,27 @@ const MessagesAPI = () => {
     }).catch(function (error) {
       toastError(error);
     });    
+  } //mediaurl
+
+  const handleSendMediaMessageUrl = async (values) => {
+    const { number, mediaurl } = values;
+    const body = "";
+    const data = { number, body, mediaurl };
+    var options = {
+      method: 'POST',
+      url: `${process.env.REACT_APP_BACKEND_URL}/api/messages/send`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${values.token}`
+      },
+      data
+    };
+    
+    axios.request(options).then(function (response) {
+      toast.success('Mensagem de MediaUrl enviada com sucesso');
+    }).catch(function (error) {
+      toastError(error);
+    });    
   }
 
   const handleSendMediaMessage = async (values) => { 
@@ -166,6 +187,84 @@ const MessagesAPI = () => {
     )
   }
 
+  const renderFormMessageMediaUrl = () => {
+    return (
+      <Formik
+        initialValues={formMessageTextData}
+        enableReinitialize={true}
+        onSubmit={(values, actions) => {
+          setTimeout(async () => {
+            await handleSendMediaMessageUrl(values);
+            actions.setSubmitting(false);
+            actions.resetForm()
+          }, 400);
+        }}
+        className={classes.elementMargin}
+      >
+        {({ isSubmitting }) => (
+          <Form className={classes.formContainer}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <Field
+                  as={TextField}
+                  label={i18n.t("messagesAPI.textMessage.token")}
+                  name="token"
+                  autoFocus
+                  variant="outlined"
+                  margin="dense"
+                  fullWidth
+                  className={classes.textField}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Field
+                  as={TextField}
+                  label={i18n.t("messagesAPI.textMessage.number")}
+                  name="number"
+                  autoFocus
+                  variant="outlined"
+                  margin="dense"
+                  fullWidth
+                  className={classes.textField}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Field
+                  as={TextField}
+                  label={i18n.t("URL da Midia")}
+                  name="mediaurl"
+                  autoFocus
+                  variant="outlined"
+                  margin="dense"
+                  fullWidth
+                  className={classes.textField}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} className={classes.textRight}>
+                <Button
+                  type="submit"
+                  color="primary"
+                  variant="contained"
+                  className={classes.btnWrapper}
+                >
+                  {isSubmitting ? (
+                    <CircularProgress
+                      size={24}
+                      className={classes.buttonProgress}
+                    />
+                  ) : 'Enviar'}
+                </Button>
+              </Grid>
+            </Grid>
+          </Form>
+        )}
+      </Formik>
+    )
+  }
+
   const renderFormMessageMedia = () => {
     return (
       <Formik
@@ -252,6 +351,7 @@ const MessagesAPI = () => {
         <ol>
           <li>Mensagens de Texto</li>
           <li>Mensagens de Media</li>
+          <li>Mensagens de Media com URL</li>
         </ol>
       </Typography>
       <Typography variant="h6" color="primary" className={classes.elementMargin}>
@@ -317,6 +417,26 @@ const MessagesAPI = () => {
             <b>Teste de Envio</b>
           </Typography>
           {renderFormMessageMedia()}
+        </Grid>
+      </Grid>
+      <Typography variant="h6" color="primary" className={classes.elementMargin}>
+        3. Mensagens de Media com URL
+      </Typography>
+      <Grid container>
+        <Grid item xs={12} sm={6}>
+          <Typography className={classes.elementMargin} component="div">
+            <p>Seguem abaixo a lista de informações necessárias para envio das mensagens de midia com url:</p>
+            <b>Endpoint: </b> {getEndpoint()} <br />
+            <b>Método: </b> POST <br />
+            <b>Headers: </b> X_TOKEN (token cadastrado) e Content-Type (application/json) <br />
+            <b>Body: </b> {"{ \"number\": \"558599999999\", \"mediaurl\": \"URL da Midia\" }"}
+          </Typography>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Typography className={classes.elementMargin}>
+            <b>Teste de Envio</b>
+          </Typography>
+          {renderFormMessageMediaUrl()}
         </Grid>
       </Grid>
     </Paper>

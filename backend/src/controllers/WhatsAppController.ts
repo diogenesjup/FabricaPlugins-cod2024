@@ -9,6 +9,10 @@ import ListWhatsAppsService from "../services/WhatsappService/ListWhatsAppsServi
 import ShowWhatsAppService from "../services/WhatsappService/ShowWhatsAppService";
 import UpdateWhatsAppService from "../services/WhatsappService/UpdateWhatsAppService";
 
+import SimpleListService, {
+  SearchContactParams
+} from "../services/WhatsappService/SimpleListService";
+
 interface WhatsappData {
   name: string;
   queueIds: number[];
@@ -142,4 +146,13 @@ export const remove = async (
   });
 
   return res.status(200).json({ message: "Whatsapp deleted." });
+};
+
+export const list = async (req: Request, res: Response): Promise<Response> => {
+  const { name } = req.query as unknown as SearchContactParams;
+  const { companyId } = req.user;
+
+  const wpps = await SimpleListService({ name, companyId });
+
+  return res.json(wpps);
 };

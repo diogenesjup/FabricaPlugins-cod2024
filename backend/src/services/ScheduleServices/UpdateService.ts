@@ -13,6 +13,7 @@ interface ScheduleData {
   companyId?: number;
   ticketId?: number;
   userId?: number;
+  whatsappId?: number;
 }
 
 interface Request {
@@ -43,6 +44,7 @@ const UpdateUserService = async ({
     contactId,
     ticketId,
     userId,
+    whatsappId,
   } = scheduleData;
 
   try {
@@ -58,6 +60,7 @@ const UpdateUserService = async ({
     contactId,
     ticketId,
     userId,
+    whatsappId,
   });
 
   await schedule.reload();

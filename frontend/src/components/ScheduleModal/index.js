@@ -60,10 +60,11 @@ const ScheduleSchema = Yup.object().shape({
 		.min(5, "Mensagem muito curta")
 		.required("Obrigatório"),
 	contactId: Yup.number().required("Obrigatório"),
+	whatsappId: Yup.number(),
 	sendAt: Yup.string().required("Obrigatório")
 });
 
-const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, reload }) => {
+const ScheduleModal = ({ open, onClose, scheduleId, contactId, whatsappId, cleanContact, reload }) => {
 	const classes = useStyles();
 	const history = useHistory();
 	const { user } = useContext(AuthContext);
@@ -80,9 +81,16 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 		name: ""
 	}
 
+	const initialWpps = {
+		id: "",
+		name: ""
+	}
+
 	const [schedule, setSchedule] = useState(initialState);
 	const [currentContact, setCurrentContact] = useState(initialContact);
 	const [contacts, setContacts] = useState([initialContact]);
+	const [currentWpps, setCurrentWpps] = useState(initialWpps);
+	const [wpps, setWpps] = useState([initialWpps]);
 
 	useEffect(() => {
 		if (contactId && contacts.length) {
@@ -94,6 +102,15 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 	}, [contactId, contacts]);
 
 	useEffect(() => {
+		if (whatsappId && wpps.length) {
+			const wpp = wpps.find(c => c.id === whatsappId);
+			if (wpp) {
+				setCurrentWpps(wpp);
+			}
+		}
+	}, [whatsappId, wpps]);
+
+	useEffect(() => {
 		const { companyId } = user;
 		if (open) {
 			try {
@@ -103,11 +120,21 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 					if (isArray(customList)) {
 						setContacts([{id: "", name: ""}, ...customList]);
 					}
+					const { data: wppList } = await api.get('/whatsapp/list', { params: { companyId: companyId } });
+					let customList2 = wppList.map((c) => ({id: c.id, name: c.name}));
+					if (isArray(customList2)) {
+						setWpps([{id: "", name: ""}, ...customList2]);
+					}
+					/*if (whatsappId) {
+						setSchedule(prevState => {
+							return { ...prevState, whatsappId }
+						});
+					}
 					if (contactId) {
 						setSchedule(prevState => {
 							return { ...prevState, contactId }
 						});
-					}
+					}*/
 
 					if (!scheduleId) return;
 
@@ -116,12 +143,13 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 						return { ...prevState, ...data, sendAt: moment(data.sendAt).format('YYYY-MM-DDTHH:mm') };
 					});
 					setCurrentContact(data.contact);
+					setCurrentWpps(data.whatsapp);
 				})()
 			} catch (err) {
 				toastError(err);
 			}
 		}
-	}, [scheduleId, contactId, open, user]);
+	}, [scheduleId, contactId, whatsappId, open, user]);
 
 	const handleClose = () => {
 		onClose();
@@ -150,6 +178,7 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 			toastError(err);
 		}
 		setCurrentContact(initialContact);
+		setCurrentWpps(initialWpps);
 		setSchedule(initialState);
 		handleClose();
 	};
@@ -216,6 +245,29 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, cleanContact, rel
 										margin="dense"
 										fullWidth
 									/>
+								</div>
+								<br />
+								<div className={classes.multFieldLine}>
+									<FormControl
+										variant="outlined"
+										fullWidth
+									>
+										<Autocomplete
+											fullWidth
+											value={currentWpps}
+											options={wpps}
+											onChange={(e, wpp) => {
+												const whatsappId = wpp ? wpp.id : '';
+												setSchedule({ ...schedule, whatsappId });
+												setCurrentWpps(wpp ? wpp : initialWpps);
+											}}
+											getOptionLabel={(option) => option.name}
+											getOptionSelected={(option, value) => {
+												return value.id === option.id
+											}}
+											renderInput={(params) => <TextField {...params} variant="outlined" placeholder="Conexao/Whatsapp" />}
+										/>
+									</FormControl>
 								</div>
 								<br />
 								<div className={classes.multFieldLine}>

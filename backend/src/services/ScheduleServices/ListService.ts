@@ -2,6 +2,7 @@ import { Op, Sequelize } from "sequelize";
 import Contact from "../../models/Contact";
 import Schedule from "../../models/Schedule";
 import User from "../../models/User";
+import Whatsapp from "../../models/Whatsapp";
 
 interface Request {
   searchParam?: string;
@@ -9,6 +10,7 @@ interface Request {
   userId?: number | string;
   companyId?: number;
   pageNumber?: string | number;
+  whatsappId?: number | string;
 }
 
 interface Response {
@@ -22,6 +24,7 @@ const ListService = async ({
   contactId = "",
   userId = "",
   pageNumber = "1",
+  whatsappId = "",
   companyId
 }: Request): Promise<Response> => {
   let whereCondition = {};
@@ -70,6 +73,13 @@ const ListService = async ({
     }
   }
 
+  if (whatsappId !== "") {
+    whereCondition = {
+      ...whereCondition,
+      whatsappId
+    }
+  }
+
   const { count, rows: schedules } = await Schedule.findAndCountAll({
     where: whereCondition,
     limit,
@@ -78,6 +88,7 @@ const ListService = async ({
     include: [
       { model: Contact, as: "contact", attributes: ["id", "name"] },
       { model: User, as: "user", attributes: ["id", "name"] },
+      { model: Whatsapp, as: "whatsapp", attributes: ["id", "name"] }
     ]
   });
 

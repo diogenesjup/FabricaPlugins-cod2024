@@ -14,6 +14,7 @@ import FindOrCreateTicketService from "../services/TicketServices/FindOrCreateTi
 import UpdateTicketService from "../services/TicketServices/UpdateTicketService";
 import DeleteWhatsAppMessage from "../services/WbotServices/DeleteWhatsAppMessage";
 import SendWhatsAppMedia from "../services/WbotServices/SendWhatsAppMedia";
+import SendWhatsAppMediaUrl from "../services/WbotServices/SendWhatsAppMediaUrl";
 import SendWhatsAppMessage from "../services/WbotServices/SendWhatsAppMessage";
 import CheckContactNumber from "../services/WbotServices/CheckNumber";
 import CheckIsValidContact from "../services/WbotServices/CheckIsValidContact";
@@ -29,6 +30,7 @@ type MessageData = {
   read: boolean;
   quotedMsg?: Message;
   number?: string;
+  mediaurl?: string;
 };
 
 export const index = async (req: Request, res: Response): Promise<Response> => {
@@ -117,6 +119,7 @@ export const send = async (req: Request, res: Response): Promise<Response> => {
 
     const numberToTest = messageData.number;
     const body = messageData.body;
+    const bodymediaurl = messageData.mediaurl;
 
     const companyId = whatsapp.companyId;
 
@@ -159,7 +162,11 @@ export const send = async (req: Request, res: Response): Promise<Response> => {
         })
       );
     } else {
-      await SendWhatsAppMessage({ body, ticket });
+      if(messageData.mediaurl !== undefined){
+        await SendWhatsAppMediaUrl({ bodymediaurl, ticket });
+      }else{
+        await SendWhatsAppMessage({ body, ticket });
+      }
       setTimeout(async () => {
         await UpdateTicketService({
           ticketId: ticket.id,
