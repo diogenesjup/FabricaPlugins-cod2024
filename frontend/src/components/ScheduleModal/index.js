@@ -129,12 +129,12 @@ const ScheduleModal = ({ open, onClose, scheduleId, contactId, whatsappId, clean
 						setSchedule(prevState => {
 							return { ...prevState, whatsappId }
 						});
-					}
+					}*/
 					if (contactId) {
 						setSchedule(prevState => {
 							return { ...prevState, contactId }
 						});
-					}*/
+					}
 
 					if (!scheduleId) return;
 
