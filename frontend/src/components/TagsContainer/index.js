@@ -57,13 +57,15 @@ export function TagsContainer({ ticket }) {
     }
 
     const onChange = async (value, reason) => {
+        var newTagged = false;
         let optionsChanged = []
         if (reason === 'create-option') {
             if (isArray(value)) {
                 for (let item of value) {
                     if (isString(item)) {
-                        const newTag = await createTag({ name: item })
+                        const newTag = await createTag({ name: item });
                         optionsChanged.push(newTag);
+                        newTagged = true;
                     } else {
                         optionsChanged.push(item);
                     }
@@ -75,6 +77,8 @@ export function TagsContainer({ ticket }) {
         }
         setSelecteds(optionsChanged);
         await syncTags({ ticketId: ticket.id, tags: optionsChanged });
+        //if(newTagged) 
+        window.location.reload(false);
     }
 
     return (

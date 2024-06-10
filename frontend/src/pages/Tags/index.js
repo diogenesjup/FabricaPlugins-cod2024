@@ -183,6 +183,7 @@ const Tags = () => {
     dispatch({ type: "RESET" });
     setPageNumber(1);
     await fetchTags();
+    window.location.reload(false);
   };
 
   const loadMore = () => {

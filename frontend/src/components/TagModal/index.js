@@ -115,6 +115,7 @@ const TagModal = ({ open, onClose, tagId, reload }) => {
 				await api.put(`/tags/${tagId}`, tagData);
 			} else {
 				await api.post("/tags", tagData);
+				window.location.reload(false);
 			}
 			toast.success(i18n.t("tagModal.success"));
 			if (typeof reload == 'function') {

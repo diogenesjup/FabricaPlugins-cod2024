@@ -146,6 +146,10 @@ const reducer2 = (state, action) => {
 
     return [...state, ...newTags];
   }
+
+  if (action.type === "RESET") {
+    return [];
+  }
 };
 
 const MainListItems = (props) => {

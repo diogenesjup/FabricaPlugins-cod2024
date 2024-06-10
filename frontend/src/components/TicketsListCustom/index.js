@@ -202,6 +202,7 @@ const TicketsListCustom = (props) => {
       (t) => queueIds.indexOf(t.queueId) > -1
     );
 
+    dispatch({ type: "RESET" });
     if(!ticketTag){
       if (profile === "user") {
         dispatch({ type: "LOAD_TICKETS", payload: filteredTickets.filter((t) => (!t.tags || t.tags.length < 1)) });

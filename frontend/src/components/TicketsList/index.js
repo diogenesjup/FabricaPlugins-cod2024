@@ -190,10 +190,18 @@ const TicketsList = ({
 
   useEffect(() => {
     if (!status && !searchParam) return;
-    dispatch({
-      type: "LOAD_TICKETS",
-      payload: tickets,
-    });
+    dispatch({ type: "RESET" });
+    if(!ticketTag){
+      dispatch({
+        type: "LOAD_TICKETS",
+        payload: tickets.filter((t) => (!t.tags || t.tags.length < 1)),
+      });
+    }else{
+      dispatch({
+        type: "LOAD_TICKETS",
+        payload: tickets,
+      });
+    }
   }, [tickets, status, searchParam]);
 
   useEffect(() => {

@@ -135,16 +135,18 @@ const SendWhatsAppMediaUrl = async ({
       //const typeAudio = media.originalname.includes("audio-record-site");
       const typeAudio = false;
       if (typeAudio) {
-        const convert = await processAudio(pathMedia);
+        //const convert = await processAudio(pathMedia);
         options = {
-          audio: fs.readFileSync(convert),
+          //audio: fs.readFileSync(convert),
+          audio: { url: pathMedia },
           mimetype: typeAudio ? "audio/mp4" : mimeTypeUrl,
           ptt: true
         };
       } else {
-        const convert = await processAudioFile(pathMedia);
+        //const convert = await processAudioFile(pathMedia);
         options = {
-          audio: fs.readFileSync(convert),
+          //audio: fs.readFileSync(convert),
+          audio: { url: pathMedia },
           mimetype: typeAudio ? "audio/mp4" : mimeTypeUrl
         };
       }
